@@ -1,4 +1,6 @@
 const main = async () => {
+  const [owner, randomPerson, random1] = await hre.ethers.getSigners();
+
   //Compile contract and generate the necessary files we need to work with contract under artifacts dir
   //hre (Hardhat Run Environment)
   //command :"npx hardhat ..." to get hre object built on the fly using the hardhat.config.js
@@ -9,7 +11,22 @@ const main = async () => {
   const waveContract = await waveContractFactory.deploy();
 
   await waveContract.deployed();
+  console.log('=============Deploy Info=============');
   console.log("Contract deployed to:", waveContract.address);
+  console.log("Contract deployed by:", owner.address);
+
+  console.log('============= Waves =============');
+  let waveCount;
+  waveCount = await waveContract.getTotalWaves();
+
+  let waveTxn = await waveContract.connect(randomPerson).wave();
+  await waveTxn.wait();
+
+  waveCount = await waveContract.getTotalWaves();
+  let waveTxn1 = await waveContract.connect(random1).wave();
+  await waveTxn1.wait();
+
+  waveCount = await waveContract.getTotalWaves();
 };
 
 const runMain = async () => {
