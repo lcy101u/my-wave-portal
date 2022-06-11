@@ -8,21 +8,39 @@ const main = async () => {
 
   //Hardhat will create a local Ethereum network for us (only for this contract)
   //Then, after the script completes it'll destroy that local network
-  const waveContract = await waveContractFactory.deploy();
+  const waveContract = await waveContractFactory.deploy({
+    value: hre.ethers.utils.parseEther('0.1'),
+  });
 
   await waveContract.deployed();
   console.log("Contract deployed to:", waveContract.address);
   console.log("Contract deployed by:", owner.address);
 
-  let waveCount;
-  waveCount = await waveContract.getTotalWaves();
-  console.log('waveCount', waveCount.toNumber());
+  /*
+   * Get Contract balance 
+   */
+  let contractBalance = await hre.ethers.provider.getBalance(
+    waveContract.address
+  );
 
+  // let waveCount;
+  // waveCount = await waveContract.getTotalWaves();
+  // console.log('waveCount', waveCount.toNumber());
+
+  /* 
+   * Send Wave 
+   */
   let waveTxn = await waveContract.wave('A message!');
   await waveTxn.wait();
 
-  waveTxn = await waveContract.connect(randomPerson).wave('Another message!');
-  await waveTxn.wait();
+  /*
+   * Get Contract balance to see what happened
+   */
+  contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
+  console.log(
+    "Contract balance: ",
+    hre.ethers.utils.formatEther(contractBalance)
+  );
 
   let allWaves = await waveContract.getAllWaves();
   console.log({ allWaves });
