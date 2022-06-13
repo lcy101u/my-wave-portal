@@ -47,7 +47,7 @@ contract WavePortal {
         // Generate a new seed for the next user that sends a wave
         seed = (block.timestamp + block.difficulty) % 100;
         console.log("Random # generated: %d", seed);
-        if (seed <= 50) {
+        if (seed <= 30) {
             console.log("%s won!", msg.sender);
             uint256 prizeAmount = 0.0001 ether; //solidity lets us use the ether unit
             require(
